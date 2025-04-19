@@ -1,6 +1,6 @@
 from fastapi import HTTPException
 # from app.services.unified.client import MetaAdsClient
-from app.services.unified.handler import create_user, authenticate_user
+from app.services.unified.handler import create_user, authenticate_user, create_campaign
 
 
 async def create_user_account(user_data):
@@ -18,6 +18,14 @@ async def login_user_account(user_data):
     
     return token_response
 
+
+async def create_platform_campaign(campaign_data, current_user):
+    user_id = str(current_user.id)
+    campaign = await create_campaign("platform", campaign_data, user_id)
+    if campaign is None:
+        raise HTTPException(status_code=500, detail="An error occured during creation of platform campaign")
+    
+    return campaign
 
 """
 async def create_ad_campaign(payload: AdCreateRequest) -> AdResponse:

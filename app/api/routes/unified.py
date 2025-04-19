@@ -1,6 +1,8 @@
 from fastapi import APIRouter, HTTPException, Depends
-from app.services.unified.schema import User, LoginRequest
-from app.services.unified.controller import create_user_account, login_user_account
+from app.core.utils.security import get_current_user
+from app.services.unified.schema import User, LoginRequest, PlatformCampaignCreate
+from app.services.unified.controller import (create_user_account, login_user_account, create_platform_campaign
+                                             )
 
 router = APIRouter()
 
@@ -23,5 +25,16 @@ async def login(payload: LoginRequest):
             raise HTTPException(status_code=401, detail="Invalid credentials")
         return {"message": "Login successful", "data": token_response}
     
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    
+@router.post("/campaigns/platform/create", status_code=201, tags=["campaigns"])
+async def add_platform_campaign(payload: PlatformCampaignCreate, current_user: User = Depends(get_current_user)):
+    try:
+        campaign = await create_platform_campaign(payload, current_user)
+        return {
+            "message": "Platform Campaign created successfully",
+            "data": campaign
+        }
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

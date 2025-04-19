@@ -2,11 +2,15 @@ from pydantic import BaseModel, EmailStr, PositiveFloat
 from beanie import Document
 from datetime import datetime, timezone
 from typing import List, Optional
-from app.core.utils.enums import UserRole, TransactionType, ServiceType, ServiceStatus, CampaignStatus
+from app.core.utils.enums import UserRole, TransactionType, ServiceType, ServiceStatus, CampaignStatus, WalletCurrency
 
 class LoginRequest(BaseModel):
     email: EmailStr
     password: str
+
+class TokenData(BaseModel):
+    id: str | None = None
+    email: str | None = None
 
 class TokenResponse(BaseModel):
     access_token: str
@@ -28,8 +32,11 @@ class User(Document):
 class Wallet(Document):
     user_id: str
     balance: PositiveFloat = 0.0  
-    currency: str = "USD"
-    updated_at: datetime
+    currency: WalletCurrency = WalletCurrency.USD
+    updated_at: datetime = datetime.now(timezone.utc)
+
+    class Settings:
+        name = "wallets"
 
 class Transaction(Document):
     id: str
@@ -55,6 +62,7 @@ class ServiceCampaign(Document):
 class PlatformCampaignBase(Document):
     name: str
     user_id: str 
+    description: Optional[str]
     total_budget: PositiveFloat
     status: CampaignStatus = CampaignStatus.DRAFT
     start_date: Optional[datetime]
@@ -64,6 +72,8 @@ class PlatformCampaignCreate(PlatformCampaignBase):
     pass
 
 class PlatformCampaign(PlatformCampaignBase):
-    id: str
     created_at: datetime = datetime.now(timezone.utc)
     service_campaigns: List["ServiceCampaign"]  # Linked to Meta/Google/TikTok campaigns
+
+    class Settings:
+        name = "platform_campaigns"

@@ -27,3 +27,9 @@ class CampaignStatus(str, Enum):
     ACTIVE = "active"
     PAUSED = "paused"
     ARCHIVED = "archived"
+
+class WalletCurrency(str, Enum):
+    USD = "usd"
+    CFA = "cfa"
+    EURO = "euro"
+    GBP = "gbp"
