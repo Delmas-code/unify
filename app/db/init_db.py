@@ -16,7 +16,7 @@ from app.services.unified.schema import (
 from app.services.meta import schema as meta_schema
 
 all_models = [
-    User
+    User, Wallet, PlatformCampaign
 ]
 
 db_logger = setup_logger('db/init_db', 'logs/database.log')

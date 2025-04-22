@@ -1,10 +1,13 @@
 from fastapi import APIRouter, HTTPException, Depends
 from app.core.utils.security import get_current_user
 from app.services.unified.schema import User, LoginRequest, PlatformCampaignCreate
-from app.services.unified.controller import (create_user_account, login_user_account, create_platform_campaign
+from app.services.unified.controller import (create_user_account, login_user_account, create_platform_campaign,
+                                             all_user_platform_campaigns
                                              )
+from app.core.utils.loggers import setup_logger
 
 router = APIRouter()
+logger = setup_logger("routes/unified", "logs/routes_unified.log")
 
 @router.post("/user/register", status_code=201, tags=["User"])
 async def register(payload: User):
@@ -35,6 +38,17 @@ async def add_platform_campaign(payload: PlatformCampaignCreate, current_user: U
         return {
             "message": "Platform Campaign created successfully",
             "data": campaign
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    
+@router.get("/campaigns/platform/all", status_code=200, tags=["campaigns"])
+async def get_all_platform_campaigns(current_user: User = Depends(get_current_user)):
+    try:
+        campaigns = await all_user_platform_campaigns(current_user)
+        return {
+            "message": "Platform Campaigns fetched successfully",
+            "data": campaigns
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

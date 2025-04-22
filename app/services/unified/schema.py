@@ -1,11 +1,11 @@
-from pydantic import BaseModel, EmailStr, PositiveFloat
+from pydantic import BaseModel, EmailStr, NonNegativeFloat, model_validator
 from beanie import Document
 from datetime import datetime, timezone
 from typing import List, Optional
 from app.core.utils.enums import UserRole, TransactionType, ServiceType, ServiceStatus, CampaignStatus, WalletCurrency
 
 class LoginRequest(BaseModel):
-    email: EmailStr
+    username: str
     password: str
 
 class TokenData(BaseModel):
@@ -31,8 +31,9 @@ class User(Document):
 
 class Wallet(Document):
     user_id: str
-    balance: PositiveFloat = 0.0  
+    balance: NonNegativeFloat = 0.0  
     currency: WalletCurrency = WalletCurrency.USD
+    created_at: datetime = datetime.now(timezone.utc)
     updated_at: datetime = datetime.now(timezone.utc)
 
     class Settings:
@@ -41,9 +42,9 @@ class Wallet(Document):
 class Transaction(Document):
     id: str
     user_id: str
-    amount: PositiveFloat
+    amount: NonNegativeFloat
     type: TransactionType
-    description: Optional[str]
+    description: Optional[str] = None
     created_at: datetime = datetime.now(timezone.utc)
 
     class Settings:
@@ -53,27 +54,35 @@ class ServiceCampaign(Document):
     id: str
     platform_campaign_id: str  # Links to PlatformCampaign
     service_type: ServiceType
-    service_campaign: Optional[Document]  # Populated after creation on respective platform
+    service_campaign: Optional[Document] = None  # Populated after creation on respective platform
     service_id: str  # ID from the respective platform (Meta, Google, TikTok)
-    service_budget: PositiveFloat  # Portion of total_budget allocated to this service
+    service_budget: NonNegativeFloat  # Portion of total_budget allocated to this service
     status: ServiceStatus = ServiceStatus.INACTIVE
     created_at: datetime = datetime.now(timezone.utc)
 
 class PlatformCampaignBase(Document):
     name: str
-    user_id: str 
-    description: Optional[str]
-    total_budget: PositiveFloat
+    description: Optional[str] = None
+    total_budget: NonNegativeFloat
     status: CampaignStatus = CampaignStatus.DRAFT
-    start_date: Optional[datetime]
-    end_date: Optional[datetime]
+    start_date: Optional[datetime] = None
+    end_date: Optional[datetime] = None
+
+    @model_validator(mode="after")
+    def validate_dates(self) -> "PlatformCampaignBase":
+        if self.start_date and self.end_date:
+            if self.end_date <= self.start_date:
+                raise ValueError("end_date must be after start_date")
+        return self
+    
 
 class PlatformCampaignCreate(PlatformCampaignBase):
     pass
 
 class PlatformCampaign(PlatformCampaignBase):
+    user_id: str
     created_at: datetime = datetime.now(timezone.utc)
-    service_campaigns: List["ServiceCampaign"]  # Linked to Meta/Google/TikTok campaigns
+    service_campaigns: List["ServiceCampaign"] = []  # Linked to Meta/Google/TikTok campaigns
 
     class Settings:
         name = "platform_campaigns"
