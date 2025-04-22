@@ -2,8 +2,8 @@ from app.services.unified.schema import (User, LoginRequest, TokenResponse, Wall
                                          PlatformCampaign)
 from passlib.context import CryptContext
 from app.core.utils.enums import UserRole, WalletCurrency
+from app.core.utils.helper import stringify_id, parse_object_id
 from beanie.operators import RegEx
-from bson import ObjectId, errors as bson_errors
 
 
 # core utils imports
@@ -69,6 +69,21 @@ async def authenticate_user(user_data: LoginRequest):
         logger.error(f"Error authenticating user: {e}")
         return None
     
+async def get_user_by_id(user_id: str):
+    try:
+        user_id = parse_object_id(user_id)
+        if not user_id:
+            logger.warning(f"Invalid user id: {user_id}")
+            return None
+        user = await User.find_one(User.id == user_id)
+        if not user:
+            logger.warning(f"User not found: {user_id}")
+            return None
+        return user
+    except Exception as e:
+        logger.error(f"Error getting user by id: {e}")
+        return None
+
 async def create_campaign(type: str, campaign_data: PlatformCampaignCreate, user_id: str):
     try:
         if type.lower() == "platform":
@@ -88,34 +103,33 @@ async def create_campaign(type: str, campaign_data: PlatformCampaignCreate, user
 async def get_all_campaigns(type: str ,user_id: str):
     try:
         if type.lower() == "platform":
-            campaigns = await PlatformCampaign.find(PlatformCampaign.user_id == user_id)
+            campaigns = await PlatformCampaign.find(PlatformCampaign.user_id == user_id).to_list()
             if not campaigns:
                 logger.warning(f"No Campaigns found for user with id: {user_id}")
-                return False
+                return []
             return campaigns
     except Exception as e:
         logger.error(f"Error getting campaigns: {e}")
         return None
     
-async def get_campaign(campaign_id: str, user_id: str):
+async def get_campaign_by_id(campaign_id: str, user_id: str):
     try:
-        try:
-            campaign_id = ObjectId(campaign_id)
-        except bson_errors.InvalidId:
-            logger.error(f"Error Invalid campaign ID format: {campaign_id}")
-            return None, "error"
+        campaign_id = parse_object_id(campaign_id)
+        if not campaign_id:
+            logger.warning(f"Invalid campaign id: {campaign_id}")
+            return False, "not_found", "not found"
         
         campaign = await PlatformCampaign.find_one(PlatformCampaign.id == campaign_id)
         
         if not campaign:
             logger.warning(f"No Campaign found with id: {campaign_id}")
-            return False, "not found"
+            return False, "not_found", "not found"
         
         if str(campaign.user_id) != str(user_id):
             logger.warning(f"Campaign with id: {campaign_id} does not belong to user with id: {user_id}")
-            return False, "authorization error"
+            return False, "authorization_error", "not owned"
         
-        return campaign
+        return campaign, "success", "success"
     except Exception as e:
         logger.error(f"Error getting campaign with id -> {campaign_id}: {e}")
-        return None, "error"
+        return None, "error", e
