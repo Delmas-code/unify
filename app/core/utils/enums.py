@@ -33,3 +33,14 @@ class WalletCurrency(str, Enum):
     CFA = "cfa"
     EURO = "euro"
     GBP = "gbp"
+
+
+class MetaCampaignObjective(str, Enum):
+    BRAND_AWARENESS = "BRAND_AWARENESS"
+    CONVERSIONS = "CONVERSIONS"
+    REACH = "REACH"
+
+
+class MetaBillingEvent(str, Enum):
+    IMPRESSIONS = "IMPRESSIONS"
+    LINK_CLICKS = "LINK_CLICKS"

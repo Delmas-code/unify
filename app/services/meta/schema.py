@@ -1,17 +1,13 @@
 from datetime import datetime
 from enum import Enum
 from pydantic import BaseModel, Field, PositiveFloat, PositiveInt
-from typing import List, Optional, Union
+from typing import List, Optional, Union, Literal
+from app.core.utils.enums import MetaCampaignObjective, MetaBillingEvent
 
-
-class MetaCampaignObjective(str, Enum):
-    BRAND_AWARENESS = "BRAND_AWARENESS"
-    CONVERSIONS = "CONVERSIONS"
-    REACH = "REACH"
-
-class MetaBillingEvent(str, Enum):
-    IMPRESSIONS = "IMPRESSIONS"
-    LINK_CLICKS = "LINK_CLICKS"
+class MetaCampaignCreate(BaseModel):
+    name: str
+    objective: Literal["LINK_CLICKS", "CONVERSIONS", "APP_INSTALLS"] = "LINK_CLICKS"
+    status: Literal["PAUSED", "ACTIVE"] = "PAUSED"
 
 class MetaCampaign(BaseModel):
     # Mirror Meta's API fields: https://developers.facebook.com/docs/marketing-api/reference/campaign
@@ -40,3 +36,6 @@ class MetaAd(BaseModel):
     ad_name: str
     creative: MetaAdCreative
     ad_set: MetaAdSet
+
+
+    

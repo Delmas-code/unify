@@ -52,7 +52,7 @@ async def authenticate_user(user_data: LoginRequest):
         # user  =  await User.find_one(User.username.match(RegEx(user_data.username, case_sensitive=False)))
 
         if not user:
-            logger.warning(f"User not found: {user_data.username}")
+            logger.info(f"User not found: {user_data.username}")
             return False
         
         if not pwd_context.verify(user_data.password, user.password):

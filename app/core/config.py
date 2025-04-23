@@ -18,9 +18,9 @@ class Settings(BaseSettings):
     JWT_ALGORITHM: str = os.environ["JWT_ALGORITHM"] if "JWT_ALGORITHM" in os.environ else "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = int(os.environ["ACCESS_TOKEN_EXPIRE_MINUTES"]) if "ACCESS_TOKEN_EXPIRE_MINUTES" in os.environ else 30
 
-    #Ad platform settings
+    #META Ad platform settings
     META_USER_ACCESS_TOKEN: str = os.environ["META_USER_ACCESS_TOKEN"] if "META_USER_ACCESS_TOKEN" in os.environ else "your_meta_app_access_token"
-    
+    META_BASE_URL: str = os.environ["META_BASE_URL"] if "META_BASE_URL" in os.environ else "https://graph.facebook.com/v19.0"
     
     # Other settings
     ENVIRONMENT: str = "development"  # Options: development, production, testing

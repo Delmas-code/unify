@@ -51,12 +51,10 @@ class Transaction(Document):
         name = "transactions"
 
 class ServiceCampaign(Document):
-    id: str
     platform_campaign_id: str  # Links to PlatformCampaign
     service_type: ServiceType
     service_campaign: Optional[Document] = None  # Populated after creation on respective platform
     service_id: str  # ID from the respective platform (Meta, Google, TikTok)
-    service_budget: NonNegativeFloat  # Portion of total_budget allocated to this service
     status: ServiceStatus = ServiceStatus.INACTIVE
     created_at: datetime = datetime.now(timezone.utc)
 
