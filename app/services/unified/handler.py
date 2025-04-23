@@ -105,7 +105,7 @@ async def get_all_campaigns(type: str ,user_id: str):
         if type.lower() == "platform":
             campaigns = await PlatformCampaign.find(PlatformCampaign.user_id == user_id).to_list()
             if not campaigns:
-                logger.warning(f"No Campaigns found for user with id: {user_id}")
+                logger.info(f"No Campaigns found for user with id: {user_id}")
                 return []
             return campaigns
     except Exception as e:

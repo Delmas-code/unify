@@ -80,7 +80,7 @@ class PlatformCampaignCreate(PlatformCampaignBase):
 class PlatformCampaign(PlatformCampaignBase):
     user_id: str
     created_at: datetime = datetime.now(timezone.utc)
-    service_campaigns: List["ServiceCampaign"] = []  # Linked to Meta/Google/TikTok campaigns
+    # service_campaigns: List["ServiceCampaign"] = []  # Linked to Meta/Google/TikTok campaigns
 
     class Settings:
         name = "platform_campaigns"
