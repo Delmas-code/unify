@@ -1,40 +1,24 @@
-from fastapi import HTTPException
 from app.core.utils.loggers import setup_logger
-
+from app.core.utils.enums import ServiceType
 from app.services.unified.schema import PlatformCampaign
-from app.core.utils.helper import parse_object_id
-from app.services.meta.schema import MetaCampaignCreate, ServiceCampaign
 
-async def create_meta_service_campaign(campaign_data, platform_campaign_id, current_user):
+logger = setup_logger("meta/handler", "logs/meta.log")
+
+async def create_meta_service_campaign(campaign_data, platform_campaign_id):
+    try:
+        campaign = PlatformCampaign(
+            name=campaign_data.name,
+            campaign_id=campaign_data.id,
+            platform_campaign_id=platform_campaign_id,
+            service_type=ServiceType.META,
+            objective=campaign_data.objective,
+            status=campaign_data.status
+        )
+
+        await campaign.insert()
+        logger.info(f"Meta service campaign created: {campaign.id}")
+        return campaign
     
-    # 1. Get the platform campaign
-    platform_campaign = await PlatformCampaign.find_one({"_id": parse_object_id(platform_campaign_id)})
-    
-    if not platform_campaign:
-        raise HTTPException(status_code=404, detail="Platform campaign not found")
-    
-    # 2. Check if Meta campaign exists
-    existing = await ServiceCampaign.find_one({
-        "platform_campaign_id": platform_campaign.id,
-        "service_type": "META"
-    })
-    
-    if existing:
-        return existing
-    
-    # 3. Create campaign on Meta
-    meta_campaign_id = await meta_client.create_campaign(campaign_data)
-    
-    # 4. Save in DB
-    campaign = ServiceCampaign(
-        name=campaign_data.name,
-        meta_campaign_id=meta_campaign_id,
-        platform_campaign_id=platform_campaign.id,
-        service_type="META",
-        objective=campaign_data.objective,
-        status=campaign_data.status
-    )
-    
-    await campaign.insert()
-    
-    return campaign
+    except Exception as e:  
+        logger.error(f"Error creating meta service campaign with data -> {campaign_data}: {e}")
+        return None

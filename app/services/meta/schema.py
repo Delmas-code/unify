@@ -7,7 +7,6 @@ from app.core.utils.enums import MetaCampaignObjective, MetaBillingEvent, Campai
 
 class MetaCampaignCreate(Document):
     name: str
-    # objective: Literal["LINK_CLICKS", "CONVERSIONS", "APP_INSTALLS"] = "LINK_CLICKS"
     objective: MetaCampaignObjective = MetaCampaignObjective.LINK_CLICKS
     status: CampaignStatus = CampaignStatus.PAUSED
 

@@ -36,9 +36,12 @@ async def create_meta_campaign(campaign_data, platform_campaign_id, current_user
             raise HTTPException(status_code=500, detail="Failed to create campaign on meta")
             
         #4: save the serivce campaign in the db
-        data = await create_meta_service_campaign(campaign_data, platform_campaign_id, current_user)
+        campaign = await create_meta_service_campaign(service_campaign, platform_campaign_id)
+        if not campaign:
+            return service_campaign, False
         
         #5: return the service campaign
+        return campaign, True
 
         
         
