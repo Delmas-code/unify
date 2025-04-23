@@ -70,3 +70,5 @@ class MetaAPIClient:
             "status": "PAUSED"
         }
         return self._post(f"act_{self.ad_account_id}/ads", data)
+    
+meta_client = MetaAPIClient(settings.META_USER_ACCESS_TOKEN, settings.META_AD_ACCOUNT_ID)

@@ -39,8 +39,11 @@ class MetaCampaignObjective(str, Enum):
     BRAND_AWARENESS = "BRAND_AWARENESS"
     CONVERSIONS = "CONVERSIONS"
     REACH = "REACH"
+    LINK_CLICKS = "LINK_CLICKS"
+    APP_INSTALLS = "APP_INSTALLS"
 
 
 class MetaBillingEvent(str, Enum):
     IMPRESSIONS = "IMPRESSIONS"
     LINK_CLICKS = "LINK_CLICKS"
+    

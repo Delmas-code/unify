@@ -1,5 +1,3 @@
-from meta.client import MetaAPIClient  # We'll build this module
-from app.models import ServiceCampaign, PlatformCampaign
 from app.services.meta.schema import MetaCampaignCreate
 from app.services.unified.schema import User
 from app.core.utils.security import get_current_user

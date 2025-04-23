@@ -3,12 +3,13 @@ from enum import Enum
 from beanie import Document
 from pydantic import BaseModel, Field, NonNegativeFloat, PositiveInt
 from typing import List, Optional, Union, Literal
-from app.core.utils.enums import MetaCampaignObjective, MetaBillingEvent, CampaignStatus
+from app.core.utils.enums import MetaCampaignObjective, MetaBillingEvent, CampaignStatus, MetaObjectives
 
-class MetaCampaignCreate(BaseModel):
+class MetaCampaignCreate(Document):
     name: str
-    objective: Literal["LINK_CLICKS", "CONVERSIONS", "APP_INSTALLS"] = "LINK_CLICKS"
-    status: Literal["PAUSED", "ACTIVE"] = "PAUSED"
+    # objective: Literal["LINK_CLICKS", "CONVERSIONS", "APP_INSTALLS"] = "LINK_CLICKS"
+    objective: MetaCampaignObjective = MetaCampaignObjective.LINK_CLICKS
+    status: CampaignStatus = CampaignStatus.PAUSED
 
 class MetaCampaign(Document):
     # Mirror Meta's API fields: https://developers.facebook.com/docs/marketing-api/reference/campaign
@@ -42,7 +43,7 @@ class MetaAdSet(Document):
     created_at: datetime = datetime.now(timezone.utc)
 
     class Settings:
-        name = "ad_sets"
+        name = "meta_ad_sets"
 
 class Ad(Document):
     adset_id: str  # Foreign key to AdSet
@@ -53,7 +54,7 @@ class Ad(Document):
     created_at: datetime = datetime.now(timezone.utc)
 
     class Settings:
-        name = "ads"
+        name = "meta_ads"
 
 
     
