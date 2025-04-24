@@ -20,6 +20,7 @@ class MetaCampaign(Document):
     objective: MetaCampaignObjective
     bid_strategy: Optional[str]
     status: CampaignStatus = CampaignStatus.PAUSED
+    synchronised_at: datetime = datetime.now(timezone.utc)
     created_at: datetime = datetime.now(timezone.utc)
     
     class Settings:
@@ -40,6 +41,7 @@ class MetaAdSet(Document):
     service_type: ServiceType = ServiceType.META
     service_campaign_id: str 
     status: MetaAdsetStatus = MetaAdsetStatus.PAUSED
+    synchronised_at: datetime = datetime.now(timezone.utc)
     created_at: datetime = datetime.now(timezone.utc)
 
     class Settings:
@@ -63,6 +65,7 @@ class MetaAdCreativeCreate(MetaAdCreativeBase):
 class MetaAdCreative(MetaAdCreativeBase, Document):
     # platform_campaign_id: str
     # service_campaign_id: str
+    synchronised_at: datetime = datetime.now(timezone.utc)
     created_at: datetime = datetime.now(timezone.utc)
 
     class Settings:
@@ -76,6 +79,7 @@ class MetaAd(Document):
     creative_id: str
     status: MetaAdsetStatus = MetaAdsetStatus.PAUSED
     service_type: ServiceType = ServiceType.META
+    synchronised_at: datetime = datetime.now(timezone.utc)
     created_at: datetime = datetime.now(timezone.utc)
 
     class Settings:

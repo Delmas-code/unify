@@ -50,6 +50,7 @@ class Transaction(Document):
     class Settings:
         name = "transactions"
 
+#To be removed
 class ServiceCampaign(Document):
     platform_campaign_id: str  # Links to PlatformCampaign
     service_type: ServiceType
