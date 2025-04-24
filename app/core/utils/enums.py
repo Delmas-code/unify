@@ -35,6 +35,10 @@ class WalletCurrency(str, Enum):
     GBP = "gbp"
 
 
+class MetaBudgetType(str, Enum):
+    DAILY = "daily"
+    LIFETIME = "lifetime"
+    
 class MetaCampaignObjective(str, Enum):
     BRAND_AWARENESS = "BRAND_AWARENESS"
     CONVERSIONS = "CONVERSIONS"
@@ -46,4 +50,10 @@ class MetaCampaignObjective(str, Enum):
 class MetaBillingEvent(str, Enum):
     IMPRESSIONS = "IMPRESSIONS"
     LINK_CLICKS = "LINK_CLICKS"
+    ACTIONS = "ACTIONS"
+    
+class MetaAdsetStatus(str, Enum):
+    ACTIVE = "ACTIVE"
+    PAUSED = "PAUSED"
+    INHERITED_FROM_SOURCE = "INHERITED_FROM_SOURCE"
     

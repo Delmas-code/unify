@@ -1,9 +1,9 @@
 from datetime import datetime, timezone
-from enum import Enum
 from beanie import Document
 from pydantic import BaseModel, Field, NonNegativeFloat, PositiveInt
-from typing import List, Optional, Union, Literal
-from app.core.utils.enums import MetaCampaignObjective, MetaBillingEvent, CampaignStatus, MetaObjectives
+from typing import Optional
+from app.core.utils.enums import (MetaCampaignObjective, MetaBillingEvent, 
+                                  CampaignStatus, MetaAdsetStatus, MetaBudgetType)
 
 class MetaCampaignCreate(Document):
     name: str
@@ -21,24 +21,21 @@ class MetaCampaign(Document):
     created_at: datetime = datetime.now(timezone.utc)
     
     class Settings:
-        name = "meta_campaigns"
-
-class MetaAdSet(BaseModel):
-    # Ad Set fields (Meta-specific)
-    targeting: dict  # Meta's targeting spec (age, location, interests)
-    billing_event: MetaBillingEvent
+        name = "service_campaigns"
 
 class MetaAdSet(Document):
     campaign_id: str  # Foreign key to MetaCampaign
     name: str
     adset_id: Optional[str]  # ID returned from Meta
     budget: NonNegativeFloat
-    optimization_goal: str
-    billing_event: str
+    budget_type: MetaBudgetType
+    bid_amount: str # still to fully understand its use
+    optimization_goal: MetaCampaignObjective
+    billing_event: MetaBillingEvent
     targeting: dict  # Store Meta targeting structure
     start_time: datetime
-    end_time: Optional[datetime]
-    status: str = "PAUSED"
+    end_time: Optional[datetime] = 0
+    status: MetaAdsetStatus = MetaAdsetStatus.PAUSED
     created_at: datetime = datetime.now(timezone.utc)
 
     class Settings:

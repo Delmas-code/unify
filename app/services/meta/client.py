@@ -1,6 +1,7 @@
 import requests
 from typing import Optional
 from urllib.parse import urlencode
+from app.core.utils.enums import MetaAdsetStatus, CampaignStatus
 
 from app.core.config import settings
 
@@ -26,28 +27,33 @@ class MetaAPIClient:
         response.raise_for_status()
         return response.json()
 
-    def create_campaign(self, name: str, objective: str = "LINK_CLICKS"):
+    def create_campaign(self, name: str, objective: str = "LINK_CLICKS", status: str = "PAUSED"):
         data = {
             "name": name,
             "objective": objective,
-            "status": "PAUSED",
+            "status": status,
             "special_ad_categories": []
         }
         return self._post(f"act_{self.ad_account_id}/campaigns", data)
 
-    def create_ad_set(self, campaign_id: str, **kwargs):
+    def create_ad_set(self, campaign_id: str, adset_data: dict):
         data = {
             "campaign_id": campaign_id,
-            "name": kwargs["name"],
-            "billing_event": "IMPRESSIONS",
-            "optimization_goal": "LINK_CLICKS",
-            "daily_budget": kwargs["daily_budget"],
-            "start_time": kwargs["start_time"],
-            "end_time": kwargs["end_time"],
-            "status": "PAUSED",
-            "targeting": kwargs["targeting"]
+            "name": adset_data["name"],
+            "billing_event": adset_data["billing_event"],
+            "optimization_goal": adset_data["optimization_goal"],
+            "start_time": adset_data["start_time"],
+            "end_time": adset_data["end_time"],
+            "status": adset_data["status"],
+            "targeting": adset_data["targeting"]
         }
+        if ("budget_type" in adset_data) and (adset_data["budget_type"] == "daily"):
+            data["daily_budget"]= adset_data["budget"]
+        elif ("budget_type" in adset_data) and (adset_data["budget_type"] == "lifetime"):
+            data["lifetime_budget"]= adset_data["budget"]
+        else: return None
         return self._post(f"act_{self.ad_account_id}/adsets", data)
+    
 
     def create_ad_creative(self, name: str, page_id: str, message: str, link: str):
         data = {

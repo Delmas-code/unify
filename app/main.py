@@ -4,7 +4,7 @@ from app.core.utils.loggers import setup_logger
 from fastapi.middleware.cors import CORSMiddleware
 
 #import routers
-from app.api.routes import unified
+from app.api.routes import unified, meta
 
 app = FastAPI()
 logger = setup_logger("app/main", "logs/app.log")
@@ -38,6 +38,11 @@ try:
         unified.router,
         prefix="/unified/v1",
         tags=["Unified"],
+    )
+    app.include_router(
+        meta.router,
+        prefix="/meta/v1",
+        tags=["Meta"],
     )
 
 except Exception as e:
