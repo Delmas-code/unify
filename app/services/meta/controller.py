@@ -1,9 +1,9 @@
 from fastapi import HTTPException
 from app.core.utils.loggers import setup_logger
 
-from app.services.unified.schema import PlatformCampaign
+from app.services.unified.schema import PlatformCampaign, Wallet
 from app.services.meta.schema import MetaCampaign
-from app.core.utils.helper import parse_object_id
+from app.core.utils.helper import parse_object_id, check_user_wallet_balance
 from app.services.meta.handler import (create_meta_service_campaign, create_meta_service_adset, 
                                        generate_ad_creative_payload, create_meta_service_ad_creative,
                                        get_platform_campaign_from_adset, create_meta_service_ad)
@@ -88,7 +88,17 @@ async def create_meta_adset(service_campaign_id: str, adset_data: dict, current_
             logger.warning(f"Campaign with id: {str(platform_campaign.id)} does not belong to user with id: {user_id}")
             raise HTTPException(status_code=403, detail="Campaign not owned by this user")
         
+        #check user wallet to ensure they have enough balance to create the adset
+        adset_budget =adset_data["budget"]
+        wallet = await Wallet.find_one(Wallet.user_id == user_id)
+        result = check_user_wallet_balance(wallet, adset_budget)
+        if not result:
+            logger.warning(f"User with id: {user_id} does not have enough balance to create adset with budget: {adset_budget}")
+            raise HTTPException(status_code=400, detail="User does not have enough balance to create adset with budget")
         
+        if not await platform_campaign.check_user_wallet(adset_budget):
+            logger.warning(f"User with id: {user_id} does not have enough balance to create adset with budget: {adset_budget}")
+            raise HTTPException(status_code=403, detail="User does not have enough balance to create adset")
         meta_ad_set = meta_client.create_ad_set(str(service_campaign_id), adset_data)
         if not meta_ad_set:
                 logger.error(f"Failed to create adset on meta: {adset_data}")

@@ -1,5 +1,6 @@
 from app.core.utils.loggers import setup_logger
 from bson import ObjectId, errors as bson_errors
+from app.services.unified.schema import Wallet
 
 logger = setup_logger("core/utils/helper", "logs/core_utils.log")
 
@@ -22,3 +23,12 @@ def parse_object_id(obj_id: str) -> ObjectId:
     except bson_errors.InvalidId:
         logger.error(f"Error converting string to ObjectId: {obj_id}")
         return None
+    
+def check_user_wallet_balance(user_wallet: Wallet, amount):
+    """
+    Check if the user has enough balance in their wallet.
+    """
+    if user_wallet.balance < amount:
+        logger.warning(f"User wallet balance is insufficient: {user_wallet.balance} < {amount}")
+        return False
+    return True
