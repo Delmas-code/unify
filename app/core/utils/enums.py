@@ -57,3 +57,9 @@ class MetaAdsetStatus(str, Enum):
     PAUSED = "PAUSED"
     INHERITED_FROM_SOURCE = "INHERITED_FROM_SOURCE"
     
+class MetaAdCreativeType(str, Enum):
+    IMAGE = "image"
+    VIDEO = "video"
+    CAROUSEL = "carousel"
+    APP_INSTALL = "app_install"
+

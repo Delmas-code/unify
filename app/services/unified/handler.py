@@ -2,8 +2,7 @@ from app.services.unified.schema import (User, LoginRequest, TokenResponse, Wall
                                          PlatformCampaign)
 from passlib.context import CryptContext
 from app.core.utils.enums import UserRole, WalletCurrency
-from app.core.utils.helper import stringify_id, parse_object_id
-from beanie.operators import RegEx
+from app.core.utils.helper import parse_object_id
 
 
 # core utils imports

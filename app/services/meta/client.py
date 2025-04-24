@@ -55,26 +55,18 @@ class MetaAPIClient:
         return self._post(f"act_{self.ad_account_id}/adsets", data)
     
 
-    def create_ad_creative(self, name: str, page_id: str, message: str, link: str):
-        data = {
-            "name": name,
-            "object_story_spec": {
-                "page_id": page_id,
-                "link_data": {
-                    "message": message,
-                    "link": link
-                }
-            }
-        }
+    def create_ad_creative(self, creative_data: dict):
+        data = creative_data.copy()
         return self._post(f"act_{self.ad_account_id}/adcreatives", data)
 
-    def create_ad(self, name: str, ad_set_id: str, creative_id: str):
+    def create_ad(self, name: str, ad_set_id: str, creative_id: str, status: str = "PAUSED"):
         data = {
             "name": name,
             "adset_id": ad_set_id,
             "creative": {"creative_id": creative_id},
-            "status": "PAUSED"
+            "status": status
         }
         return self._post(f"act_{self.ad_account_id}/ads", data)
+    
     
 meta_client = MetaAPIClient(settings.META_USER_ACCESS_TOKEN, settings.META_AD_ACCOUNT_ID)
