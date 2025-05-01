@@ -3,6 +3,10 @@ from typing import Optional
 from urllib.parse import urlencode
 from app.core.utils.enums import MetaAdsetStatus, CampaignStatus
 
+from facebook_business.adobjects.campaign import Campaign
+from facebook_business.adobjects.adaccount import AdAccount
+from facebook_business.api import FacebookAdsApi
+
 from app.core.config import settings
 
 
@@ -11,6 +15,12 @@ class MetaAPIClient:
         self.access_token = access_token
         self.ad_account_id = ad_account_id
         self.base_url = settings.META_BASE_URL
+
+        FacebookAdsApi.init(
+            access_token=access_token,
+            api_version='v22.0'  # Use latest stable version
+        )
+
 
     def _url(self, endpoint: str):
         return f"{self.base_url}/{endpoint}"
@@ -35,6 +45,22 @@ class MetaAPIClient:
             "status": status,
             "special_ad_categories": []
         }
+
+        try:
+            account = AdAccount(f'act_{self.ad_account_id}')
+            campaign = account.create_campaign(
+                fields=[Campaign.Field.name, Campaign.Field.objective, Campaign.Field.status],
+                params={
+                    'name': name,
+                    'objective': objective,
+                    'status': status,
+                    #'special_ad_categories': [],
+                }
+            )
+            return campaign
+        except Exception as e:
+            print(f"Error creating campaign: {e}")
+            return None
         #maxadset per cmpaign is 200
         return self._post(f"act_{self.ad_account_id}/campaigns", data)
 
