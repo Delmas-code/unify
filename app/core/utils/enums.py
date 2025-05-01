@@ -23,10 +23,10 @@ class ServiceStatus(str, Enum):
 
 
 class CampaignStatus(str, Enum):
-    DRAFT = "draft"
-    ACTIVE = "active"
-    PAUSED = "paused"
-    ARCHIVED = "archived"
+    DRAFT = "DRAFT"
+    ACTIVE = "ACTIVE"
+    PAUSED = "PAUSED"
+    ARCHIVED = "ARCHIVED"
 
 class WalletCurrency(str, Enum):
     USD = "usd"

@@ -9,11 +9,12 @@ router = APIRouter()
 
 @router.post("/service-campaign/create", status_code=201)
 async def create_meta_service_campaign_route(
-    campaign_data: MetaCampaignCreate,
+    payload: MetaCampaignCreate,
     current_user: User = Depends(get_current_user),
 ):
     try:
-        campaign, db_status = create_meta_campaign(campaign_data, current_user)
+        print("payload", payload)
+        campaign, db_status = await create_meta_campaign(payload, current_user)
         if not db_status:
             return {
                     "message": "Service campaign was created successfully but failed to create service campaign in the database",

@@ -25,6 +25,7 @@ class MetaAPIClient:
         data["access_token"] = self.access_token
         response = requests.post(self._url(endpoint), data=data)
         response.raise_for_status()
+        print(f"response Json {response.json()}\n response: {response}\n")
         return response.json()
 
     def create_campaign(self, name: str, objective: str = "LINK_CLICKS", status: CampaignStatus = CampaignStatus.PAUSED):
@@ -32,9 +33,9 @@ class MetaAPIClient:
             "name": name,
             "objective": objective,
             "status": status,
-            #"special_ad_categories": []
+            "special_ad_categories": []
         }
-        #maxadset per cmpaign
+        #maxadset per cmpaign is 200
         return self._post(f"act_{self.ad_account_id}/campaigns", data)
 
     def create_ad_set(self, campaign_id: str, adset_data: dict):

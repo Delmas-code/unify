@@ -6,7 +6,7 @@ from app.core.utils.enums import (MetaCampaignObjective, MetaBillingEvent, Servi
                                   CampaignStatus, MetaAdsetStatus, MetaBudgetType,
                                   MetaAdCreativeType)
 
-class MetaCampaignCreate(Document):
+class MetaCampaignCreate(BaseModel):
     name: str
     platform_campaign_id: str
     objective: MetaCampaignObjective = MetaCampaignObjective.LINK_CLICKS

@@ -2,7 +2,7 @@ from fastapi import HTTPException
 from app.core.utils.loggers import setup_logger
 
 from app.services.unified.schema import PlatformCampaign, Wallet
-from app.services.meta.schema import MetaCampaign
+from app.services.meta.schema import MetaCampaign, MetaCampaignCreate
 from app.core.utils.helper import parse_object_id, check_user_wallet_balance
 from app.services.meta.handler import (create_meta_service_campaign, create_meta_service_adset, 
                                        generate_ad_creative_payload, create_meta_service_ad_creative,
@@ -11,16 +11,15 @@ from app.services.meta.client import meta_client
 
 logger = setup_logger("meta/controller", "logs/meta.log")
 
-async def create_meta_campaign(campaign_data, current_user):
+async def create_meta_campaign(campaign_data: MetaCampaignCreate, current_user):
     try:
         #1: get platform campaign
-        platform_campaign_id = campaign_data["platform_campaign_id"]
+        platform_campaign_id = campaign_data.platform_campaign_id
         platform_campaign_id = parse_object_id(platform_campaign_id)
 
         if not platform_campaign_id:
             logger.warning(f"Invalid plaform campaign id: {platform_campaign_id}")
             raise HTTPException(status_code=400, detail="Invalid platform campaign id")
-
         platform_campaign = await PlatformCampaign.find_one({"_id": platform_campaign_id})
         if not platform_campaign:
             logger.warning(f"No platform campaign found with id: {platform_campaign_id}")
@@ -33,7 +32,9 @@ async def create_meta_campaign(campaign_data, current_user):
             raise HTTPException(status_code=403, detail="Campaign not owned by this user")
         
         #3: create service campaign on meta
-        service_campaign = meta_client.create_campaign(campaign_data["name"], campaign_data["objective"], campaign_data["status"])
+        print("about to create service campaign")
+        service_campaign = meta_client.create_campaign(campaign_data.name, campaign_data.objective, campaign_data.status)
+        print(f"service_campaign: {service_campaign}")
         if not service_campaign:
             logger.error(f"Failed to create campaign on meta: {campaign_data}")
             raise HTTPException(status_code=500, detail="Failed to create campaign on meta")
