@@ -17,11 +17,13 @@ async def create_user_account(user_data):
 
 async def login_user_account(user_data):
     try:
-        token_response = await authenticate_user(user_data)
+        token_response, msg = await authenticate_user(user_data)
         if token_response is None:
             raise HTTPException(status_code=500, detail="An error occurred during authentication")
-        elif token_response is False:
-            raise HTTPException(status_code=500, detail="Invalid credentials")
+        elif token_response is False and msg == "authorization_error":
+            raise HTTPException(status_code=401, detail="Invalid credentials")
+        elif token_response is False and msg == "not_found":
+            raise HTTPException(status_code=401, detail="User not found")
         
         return token_response
     except Exception as e:

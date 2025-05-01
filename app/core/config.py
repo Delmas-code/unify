@@ -22,7 +22,8 @@ class Settings(BaseSettings):
     META_USER_ACCESS_TOKEN: str = os.environ["META_USER_ACCESS_TOKEN"] if "META_USER_ACCESS_TOKEN" in os.environ else "your_meta_app_access_token"
     META_BASE_URL: str = os.environ["META_BASE_URL"] if "META_BASE_URL" in os.environ else "https://graph.facebook.com/v19.0"
     META_AD_ACCOUNT_ID: str = os.environ["META_AD_ACCOUNT_ID"] if "META_AD_ACCOUNT_ID" in os.environ else "your_ad_account_id"
-    
+    #Invore(100945682247560)
+    #Bickdrim Sandbox Ad Account (711620734622441)
     # Other settings
     ENVIRONMENT: str = "development"  # Options: development, production, testing
 

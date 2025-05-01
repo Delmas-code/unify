@@ -27,13 +27,14 @@ class MetaAPIClient:
         response.raise_for_status()
         return response.json()
 
-    def create_campaign(self, name: str, objective: str = "LINK_CLICKS", status: str = "PAUSED"):
+    def create_campaign(self, name: str, objective: str = "LINK_CLICKS", status: CampaignStatus = CampaignStatus.PAUSED):
         data = {
             "name": name,
             "objective": objective,
             "status": status,
-            "special_ad_categories": []
+            #"special_ad_categories": []
         }
+        #maxadset per cmpaign
         return self._post(f"act_{self.ad_account_id}/campaigns", data)
 
     def create_ad_set(self, campaign_id: str, adset_data: dict):

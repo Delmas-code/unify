@@ -11,10 +11,10 @@ from app.services.meta.client import meta_client
 
 logger = setup_logger("meta/controller", "logs/meta.log")
 
-async def create_meta_campaign(campaign_data, platform_campaign_id, current_user):
+async def create_meta_campaign(campaign_data, current_user):
     try:
         #1: get platform campaign
-        
+        platform_campaign_id = campaign_data["platform_campaign_id"]
         platform_campaign_id = parse_object_id(platform_campaign_id)
 
         if not platform_campaign_id:
@@ -49,6 +49,7 @@ async def create_meta_campaign(campaign_data, platform_campaign_id, current_user
         
         
     except Exception as e:
+        print("errors")
         raise HTTPException(status_code=500, detail=str(e))
 
     """

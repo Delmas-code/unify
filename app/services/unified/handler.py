@@ -52,21 +52,21 @@ async def authenticate_user(user_data: LoginRequest):
 
         if not user:
             logger.info(f"User not found: {user_data.username}")
-            return False
+            return False, "not_found"
         
         if not pwd_context.verify(user_data.password, user.password):
             logger.warning(f"Invalid password for user: {user_data.username}")
-            return False
+            return False, "authorization_error"
 
         token = create_access_token({"sub": str(user.id), "username": user.username})
         if not token:
-            return None
+            return None, "error"
         logger.info(f"User authenticated: {str(user.id)}")
-        return TokenResponse(access_token=token)
+        return TokenResponse(access_token=token), "success"
     
     except Exception as e:
         logger.error(f"Error authenticating user: {e}")
-        return None
+        return None, "error"
     
 async def get_user_by_id(user_id: str):
     try:

@@ -10,7 +10,7 @@ from app.core.utils.loggers import setup_logger
 router = APIRouter()
 logger = setup_logger("routes/unified", "logs/routes_unified.log")
 
-@router.get("/user", status_code=200, tags=["User"])
+@router.get("/user", status_code=200)
 async def get_user(current_user: User = Depends(get_current_user)):
     try:
         user = await get_user_account(current_user)
@@ -25,7 +25,7 @@ async def get_user(current_user: User = Depends(get_current_user)):
         logger.error(f"Error fetching user account: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
-@router.post("/user/register", status_code=201, tags=["User"])
+@router.post("/user/register", status_code=201)
 async def register(payload: User):
     try:
         user_id = await create_user_account(payload)
@@ -36,7 +36,7 @@ async def register(payload: User):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
     
-@router.post("/user/login", status_code=200, tags=["User"])
+@router.post("/user/login", status_code=200)
 async def login(payload: LoginRequest):
     try:
         token_response = await login_user_account(payload)
@@ -58,7 +58,7 @@ async def add_platform_campaign(payload: PlatformCampaignCreate, current_user: U
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
     
-@router.get("/campaign/platform/all", status_code=200, tags=["campaigns"])
+@router.get("/campaign/platform/all", status_code=200)
 async def get_all_platform_campaigns(current_user: User = Depends(get_current_user)):
     try:
         campaigns = await all_user_platform_campaigns(current_user)
@@ -70,7 +70,7 @@ async def get_all_platform_campaigns(current_user: User = Depends(get_current_us
         raise HTTPException(status_code=500, detail=str(e))
     
 
-@router.get("/campaign/platform/single", status_code=200, tags=["campaigns"])
+@router.get("/campaign/platform/single", status_code=200)
 async def get_platform_campaign(
     campaign_id: str, 
     current_user: User = Depends(get_current_user)

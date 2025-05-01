@@ -7,14 +7,13 @@ from fastapi import APIRouter, Depends, HTTPException, status
 
 router = APIRouter()
 
-@router.post("/service-campaign/create", status_code=201, tags=["Meta"])
+@router.post("/service-campaign/create", status_code=201)
 async def create_meta_service_campaign_route(
     campaign_data: MetaCampaignCreate,
-    platform_campaign_id: str,
     current_user: User = Depends(get_current_user),
 ):
     try:
-        campaign, db_status = create_meta_campaign(campaign_data, platform_campaign_id, current_user)
+        campaign, db_status = create_meta_campaign(campaign_data, current_user)
         if not db_status:
             return {
                     "message": "Service campaign was created successfully but failed to create service campaign in the database",
@@ -33,7 +32,7 @@ async def create_meta_service_campaign_route(
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-@router.post("/adsets/create", status_code=201, tags=["Meta"])
+@router.post("/adsets/create", status_code=201)
 async def create_adset_route(
     service_campaign_id: str,
     adset_data: MetaAdSet,
@@ -59,7 +58,7 @@ async def create_adset_route(
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-@router.post("/ads/create", status_code=201, tags=["Meta"])
+@router.post("/ads/create", status_code=201)
 async def create_meta_ad_route(
     # platform_campaign_id: str,
     ad_data: MetaAd,

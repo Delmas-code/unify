@@ -8,6 +8,7 @@ from app.core.utils.enums import (MetaCampaignObjective, MetaBillingEvent, Servi
 
 class MetaCampaignCreate(Document):
     name: str
+    platform_campaign_id: str
     objective: MetaCampaignObjective = MetaCampaignObjective.LINK_CLICKS
     status: CampaignStatus = CampaignStatus.PAUSED
 

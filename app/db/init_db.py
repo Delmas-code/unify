@@ -6,17 +6,17 @@ from app.core.utils.loggers import setup_logger
 # importing all models(schema) for each service to ensure they are registered with Beanie
 from app.services.unified.schema import (
     PlatformCampaign,
-    ServiceCampaign,
-    Transaction,
     Wallet,
-    User,
-    ServiceStatus,
-    CampaignStatus,
+    User
 )
-from app.services.meta import schema as meta_schema
+
+from app.services.meta.schema import (
+    MetaCampaign
+)
+# from app.services.meta import schema as meta_schema
 
 all_models = [
-    User, Wallet, PlatformCampaign
+    User, Wallet, PlatformCampaign, MetaCampaign
 ]
 
 db_logger = setup_logger('db/init_db', 'logs/database.log')
